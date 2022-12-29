@@ -1,5 +1,10 @@
+import math
 from math import atan, degrees, sqrt
+
+import cv2
+
 from utils.cv2 import point_get_difference
+from utils.files.fileWriter import FileWriter
 
 
 def x_get_ratio(angle):
@@ -47,19 +52,57 @@ def y_get_ratio(angle):
 
 
 def get_move_angle__new(aim_target, gwr, pixels_per_degree, fov, _r=False):
-    game_window_rect__center = (gwr[2]/2, gwr[3]/2)
+    game_window_rect__center = (gwr[2] / 2, gwr[3] / 2)
     rel_diff = list(point_get_difference(game_window_rect__center, aim_target))
 
-    x_degs = degrees(atan(rel_diff[0]/game_window_rect__center[0])) * ((fov[0]/2)/45)
-    y_degs = degrees(atan(rel_diff[1] / game_window_rect__center[0])) * ((fov[1]/2)/45)
+    x_degs = degrees(atan(rel_diff[0] / game_window_rect__center[0])) * ((fov[0] / 2) / 45)
+    y_degs = degrees(atan(rel_diff[1] / game_window_rect__center[0])) * ((fov[1] / 2) / 45)
     rel_diff[0] = pixels_per_degree * x_degs
     rel_diff[1] = pixels_per_degree * y_degs
 
-    return rel_diff, (x_degs+y_degs)
+    return rel_diff, (x_degs + y_degs)
 
+
+def get_move_angle_my(aim_target, gwr, pixels_per_degree, fov):
+    gwr__center = (gwr[2] // 2, gwr[3] // 2)
+
+    rel_diff = [0, 0]
+    if gwr__center[0] > aim_target[0]:
+        rel_diff[0] = -1
+    else:
+        rel_diff[0] = 1
+
+    if gwr__center[1] > aim_target[1]:
+        rel_diff[1] = -1
+    else:
+        rel_diff[1] = 1
+
+    x_rel_target_center = (aim_target[0]-gwr__center[0])/gwr__center[0]*rel_diff[0]
+    angle_a = fov[0]/2
+    AB = fov[2]
+    # hypotenuse
+    AC = AB / math.cos(math.radians(angle_a))
+    BC = math.sqrt(AC ** 2 - AB ** 2)
+    BE = x_rel_target_center * BC
+    tan_x_target = BE / AB
+    angle_x_target = math.degrees(math.atan(tan_x_target))
+    rel_diff[0] = angle_x_target*pixels_per_degree*rel_diff[0]
+
+    y_rel_target_center = (aim_target[1] - gwr__center[1]) / gwr__center[1] * rel_diff[1]
+    angle_a = fov[1] / 2
+    AB = fov[2]
+    # hypotenuse
+    AC = AB / math.cos(math.radians(angle_a))
+    BC = math.sqrt(AC ** 2 - AB ** 2)
+    BE = y_rel_target_center * BC
+    tan_y_target = BE / AB
+    angle_y_target = math.degrees(math.atan(tan_y_target))
+    rel_diff[1] = angle_y_target * pixels_per_degree * rel_diff[1]
+
+    return rel_diff
 
 def get_move_angle(aim_target, gwr, pixels_per_degree, fov):
-    game_window_rect__center = (gwr[2]/2, gwr[3]/2)
+    game_window_rect__center = (gwr[2] / 2, gwr[3] / 2)
 
     # rel_diff = list(point_get_difference(game_window_rect__center, aim_target))  # get absolute offset
     rel_diff = [0, 0]
@@ -84,7 +127,8 @@ def get_move_angle(aim_target, gwr, pixels_per_degree, fov):
 
     if x_diff > game_window_rect__center[0] / 2:
         x_diff_quarter = x_diff - game_window_rect__center[0] / 2
-        x_diff__angle_fixed = X_CORRECTION_DEGS - (X_CORRECTION_DEGS * (x_diff_quarter / (game_window_rect__center[0] / 2)))
+        x_diff__angle_fixed = X_CORRECTION_DEGS - (
+                X_CORRECTION_DEGS * (x_diff_quarter / (game_window_rect__center[0] / 2)))
     else:
         x_diff_quarter = x_diff
         x_diff__angle_fixed = X_CORRECTION_DEGS * (x_diff_quarter / (game_window_rect__center[0] / 2))
@@ -107,7 +151,8 @@ def get_move_angle(aim_target, gwr, pixels_per_degree, fov):
 
     if y_diff > game_window_rect__center[1] / 2:
         y_diff_quarter = y_diff - game_window_rect__center[1] / 2
-        y_diff__angle_fixed = Y_CORRECTION_DEGS - (Y_CORRECTION_DEGS * (y_diff_quarter / (game_window_rect__center[1] / 2)))
+        y_diff__angle_fixed = Y_CORRECTION_DEGS - (
+                Y_CORRECTION_DEGS * (y_diff_quarter / (game_window_rect__center[1] / 2)))
     else:
         y_diff_quarter = y_diff
         y_diff__angle_fixed = Y_CORRECTION_DEGS * (y_diff_quarter / (game_window_rect__center[1] / 2))
