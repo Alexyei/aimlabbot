@@ -38,5 +38,5 @@ class WinHelper:
         # img = cv2.resize(img, (1280, 720))
         # cv2.imshow("test", img)
         # cv2.waitKey(0)
-        FileWriter.write(window_rect)
+        # FileWriter.write(window_rect)
         return tuple(window_rect)
