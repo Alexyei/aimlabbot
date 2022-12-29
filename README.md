@@ -32,7 +32,7 @@ open conspects folder for detail
 12. repeat
 
 # Result
-![result](./result.PNG)
+![result](./result.png)
 
 # Settings screenshots
 ![settings1](./conspects/settings/settings1.PNG)
