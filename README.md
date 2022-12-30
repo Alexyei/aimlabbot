@@ -33,6 +33,7 @@ open conspects folder for detail
 
 # Result
 ![result](./result.png)
+![result](./result1.png)
 
 # Settings screenshots
 ![settings1](./conspects/settings/settings1.PNG)

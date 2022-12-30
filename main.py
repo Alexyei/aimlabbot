@@ -44,9 +44,9 @@ _show_fps = False
 # the bigger these values, the more accurate and fail-safe bot will behave
 # minimum interval after move hover to target
 # PAUSE BEFORE SHOT
-_pause = 0.04
+_pause = 0.02
 # minimum interval between shoots
-_shoot_interval = 0.04  # seconds
+_shoot_interval = 0.02  # seconds
 
 # used by the script
 # left, top, width, height
@@ -118,7 +118,7 @@ def cv2_process():
         # OpenCV HSV Scale (H: 0-179, S: 0-255, V: 0-255)
         hue_point = 87
         sphere_color = ((hue_point, 100, 100), (hue_point + 20, 255, 255))  # HSV
-        min_target_size = (40, 40)
+        min_target_size = (10, 10)
         max_target_size = (150, 150)
 
         # convert bgr to hsv image
@@ -353,11 +353,11 @@ def exit_app():
 
 
 keyboard.add_hotkey(ACTIVATION_HOTKEY, switch_shoot_state, args=('triggered', 'hotkey'))
-
+keyboard.add_hotkey(MOVELEFT_HOTKEY, move_left)
+keyboard.add_hotkey(MOVERIGHT_HOTKEY, move_right)
+keyboard.add_hotkey(MOVEUP_HOTKEY, move_up)
+keyboard.add_hotkey(MOVEDOWN_HOTKEY, move_down)
+keyboard.add_hotkey(EXIT_HOTKEY, exit_app, args=[])
 if __name__ == "__main__":
     cv2_process()
-    keyboard.add_hotkey(MOVELEFT_HOTKEY, move_left)
-    keyboard.add_hotkey(MOVERIGHT_HOTKEY, move_right)
-    keyboard.add_hotkey(MOVEUP_HOTKEY, move_up)
-    keyboard.add_hotkey(MOVEDOWN_HOTKEY, move_down)
-    keyboard.add_hotkey(EXIT_HOTKEY, exit_app, args=[])
+
